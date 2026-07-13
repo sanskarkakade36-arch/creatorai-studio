@@ -29,7 +29,8 @@ export default function RegisterForm() {
         fullName,
         email,
         password,
-      });
+        confirmPassword,
+});
 
       router.push("/login");
     } catch (err: any) {
