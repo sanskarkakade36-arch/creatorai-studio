@@ -463,7 +463,17 @@ export async function POST(request: NextRequest) {
 
     return Response.json({ images, provider, creditsUsed });
   } catch (err) {
-    const message = err instanceof Error ? err.message : "Generation failed";
-    return Response.json({ error: message }, { status: 500 });
-  }
+  console.error("FULL ERROR:", err);
+
+  const message =
+    err instanceof Error ? err.message : "Generation failed";
+
+  return Response.json(
+    {
+      error: message,
+      stack: err instanceof Error ? err.stack : null,
+    },
+    { status: 500 }
+  );
+}
 }
