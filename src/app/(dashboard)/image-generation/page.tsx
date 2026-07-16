@@ -218,7 +218,7 @@ if (data.creditsUsed) {
   return (
     <div>
       <Header title="AI Image Generation" />
-      <div className="flex h-[calc(100vh-57px)]">
+      <div className="flex h-[calc(100vh-57px)] min-w-0 overflow-hidden">
 
         {/* Left panel — controls */}
         <div
@@ -434,7 +434,7 @@ if (data.creditsUsed) {
         </div>
 
         {/* Right panel — prompt + output */}
-        <div className="flex-1 flex flex-col overflow-hidden">
+        <div className="flex-1 min-w-0 flex flex-col overflow-hidden">
           {/* Prompt area */}
           <div className="p-4 space-y-3" style={{ borderBottom: "1px solid var(--border)" }}>
             <div className="relative">
@@ -492,7 +492,7 @@ if (data.creditsUsed) {
           </div>
 
           {/* Output grid */}
-          <div className="flex-1 overflow-y-auto p-4">
+          <div className="flex-1 min-w-0 overflow-auto p-4">
             {error && (
               <div className="flex items-center gap-3 mb-4 p-4 rounded-xl" style={{ background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.3)" }}>
                 <AlertCircle size={18} className="text-red-400 shrink-0" />
