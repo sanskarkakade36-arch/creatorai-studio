@@ -130,33 +130,49 @@ export default function ImageGenerationPage() {
 
     try {
       const res = await fetch("/api/generate-image", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          prompt,
-          negPrompt,
-          model,
-          width: selectedRatio.w,
-          height: selectedRatio.h,
-          count,
-          steps,
-          guidance,
-          style,
-          ...(refImage ? { image: refImage, strength } : {}),
-        }),
-      });
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({
+    prompt,
+    negPrompt,
+    model,
+    width: selectedRatio.w,
+    height: selectedRatio.h,
+    count,
+    steps,
+    guidance,
+    style,
+    ...(refImage ? { image: refImage, strength } : {}),
+  }),
+});
 
-      const data = await res.json();
+const text = await res.text();
 
-      if (!res.ok) {
-        setError(data.error ?? "Generation failed");
-        return;
-      }
+console.log("API Response:", text);
 
-      setImages(data.images ?? []);
-      setProvider(data.provider ?? null);
-      if (data.creditsUsed) adjustCredits(-data.creditsUsed);
-    } catch (err) {
+let data;
+
+try {
+  data = JSON.parse(text);
+} catch {
+  setError("Server returned invalid JSON");
+  console.error(text);
+  return;
+}
+
+if (!res.ok) {
+  setError(data.error || "Generation failed");
+  return;
+}
+
+setImages(data.images || []);
+setProvider(data.provider || null);
+
+if (data.creditsUsed) {
+  adjustCredits(-data.creditsUsed);
+}} catch (err) {
       setError(err instanceof Error ? err.message : "Network error");
     } finally {
       setLoading(false);

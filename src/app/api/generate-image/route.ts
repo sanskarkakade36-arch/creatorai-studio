@@ -463,7 +463,7 @@ export async function POST(request: NextRequest) {
 
     return Response.json({ images, provider, creditsUsed });
   } catch (err) {
-  console.error("========== IMAGE GENERATION ERROR ==========");
+  console.error("========== IMAGE API ERROR ==========");
   console.error(err);
 
   if (err instanceof Error) {
@@ -477,5 +477,4 @@ export async function POST(request: NextRequest) {
     },
     { status: 500 }
   );
-}
-}
+}}
