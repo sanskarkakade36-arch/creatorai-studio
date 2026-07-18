@@ -153,17 +153,26 @@ class AuthService {
  * --------------------------
  */
 async signInWithGoogle() {
-  const { data, error } =
-    await supabase.auth.signInWithOAuth({
-      provider: "google",
-      options: {
-        redirectTo: `${window.location.origin}/auth/callback`,
-      },
-    });
+  console.log("Inside signInWithGoogle");
+
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider: "google",
+    options: {
+      redirectTo: `${window.location.origin}/auth/callback`,
+      skipBrowserRedirect: true,
+    },
+  });
+
+  console.log("DATA:", data);
+  console.log("ERROR:", error);
 
   if (error) throw error;
 
-  return data;
+  if (data?.url) {
+    console.log("URL =", data.url);
+
+    window.location.assign(data.url);
+  }
 }
 
   /**
