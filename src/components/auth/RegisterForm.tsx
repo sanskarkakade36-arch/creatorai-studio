@@ -54,6 +54,7 @@ export function RegisterForm() {
     setLoading(true);
 
     const result = await authService.signUp(data);
+    console.log("Signup Result:", result);
 
     if (result.session) {
       toast.success("Account created successfully.");
@@ -67,10 +68,10 @@ export function RegisterForm() {
     );
 
     router.push(
-      `/verify-email?email=${encodeURIComponent(
-        data.email
-      )}`
-    );
+  `/auth/verify-email?email=${encodeURIComponent(
+    data.email
+  )}`
+);
   } catch (error: any) {
     toast.error(
       error.message || "Registration failed."

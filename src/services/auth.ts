@@ -62,21 +62,24 @@ class AuthService {
    * --------------------------
    */
   async signUp(data: RegisterFormData) {
-    const { data: authData, error } =
-      await supabase.auth.signUp({
-        email: data.email,
-        password: data.password,
-        options: {
-          data: {
-            full_name: data.fullName,
-          },
+  const { data: authData, error } =
+    await supabase.auth.signUp({
+      email: data.email,
+      password: data.password,
+      options: {
+        data: {
+          full_name: data.fullName,
         },
-      });
+      },
+    });
 
-    if (error) throw error;
+  console.log("Supabase Response:", authData);
+  console.log("Supabase Error:", error);
 
-    return authData;
-  }
+  if (error) throw error;
+
+  return authData;
+}
 
   /**
    * --------------------------
