@@ -27,13 +27,19 @@ export async function middleware(request: NextRequest) {
   );
 
   // Refresh session
-  const {
-  data: { session },
-} = await supabase.auth.getSession();
+ const {
+  data: { user },
+  error,
+} = await supabase.auth.getUser();
 
-const user = session?.user;
+if (
+  error &&
+  error.name !== "AuthSessionMissingError"
+) {
+  console.error(error);
+}
 
-  const pathname = request.nextUrl.pathname;
+console.log("Middleware User:", user?.email);const pathname = request.nextUrl.pathname;
 
   const protectedRoutes = [
     "/dashboard",

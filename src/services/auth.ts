@@ -150,9 +150,7 @@ class AuthService {
       await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
-          redirectTo: `${window.location.origin}/auth/callback`,
-          skipBrowserRedirect: true,
-        },
+          redirectTo: `${window.location.origin}/auth/callback`,        },
       });
 
     if (error) throw error;
