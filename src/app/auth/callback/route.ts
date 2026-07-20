@@ -7,28 +7,28 @@ export async function GET(request: NextRequest) {
   const code = requestUrl.searchParams.get("code");
 
   if (!code) {
-    console.error("OAuth Error: No code received.");
-
     return NextResponse.redirect(
-      `${requestUrl.origin}/login?error=no_code`
+      new URL("/login", requestUrl.origin)
     );
   }
 
   const supabase = await createClient();
 
-  const { error } = await supabase.auth.exchangeCodeForSession(code);
+  const { error } =
+    await supabase.auth.exchangeCodeForSession(code);
 
   if (error) {
-    console.error("OAuth Exchange Error:", error.message);
+    console.error(error);
 
     return NextResponse.redirect(
-      `${requestUrl.origin}/login?error=oauth_failed`
+      new URL("/login", requestUrl.origin)
     );
   }
 
-  console.log("OAuth login successful");
+  // Refresh session
+  await supabase.auth.getUser();
 
   return NextResponse.redirect(
-    `${requestUrl.origin}/dashboard`
+    new URL("/auth/success", requestUrl.origin)
   );
 }

@@ -18,7 +18,6 @@ export async function middleware(request: NextRequest) {
         setAll(cookiesToSet) {
           cookiesToSet.forEach(({ name, value, options }) => {
             request.cookies.set(name, value);
-
             response.cookies.set(name, value, options);
           });
         },
@@ -26,20 +25,20 @@ export async function middleware(request: NextRequest) {
     }
   );
 
-  // Refresh session
- const {
-  data: { user },
-  error,
-} = await supabase.auth.getUser();
+  // Refresh auth session
+  const {
+    data: { user },
+    error,
+  } = await supabase.auth.getUser();
 
-if (
-  error &&
-  error.name !== "AuthSessionMissingError"
-) {
-  console.error(error);
-}
+  // Ignore "not logged in" errors
+  if (error && error.name !== "AuthSessionMissingError") {
+    console.error("Middleware Error:", error);
+  }
 
-console.log("Middleware User:", user?.email);const pathname = request.nextUrl.pathname;
+  console.log("Middleware User:", user?.email);
+
+  const pathname = request.nextUrl.pathname;
 
   const protectedRoutes = [
     "/dashboard",
@@ -65,17 +64,15 @@ console.log("Middleware User:", user?.email);const pathname = request.nextUrl.pa
     pathname.startsWith(route)
   );
 
-  // User not logged in
+  // If not logged in, redirect to login
   if (!user && isProtected) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
-  // User already logged in
+  // If already logged in, prevent opening auth pages
   if (user && isAuthRoute) {
     return NextResponse.redirect(new URL("/dashboard", request.url));
   }
-  
-console.log("Middleware User:", user?.email);
 
   return response;
 }
