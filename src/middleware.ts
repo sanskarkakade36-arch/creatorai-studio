@@ -28,8 +28,10 @@ export async function middleware(request: NextRequest) {
 
   // Refresh session
   const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  data: { session },
+} = await supabase.auth.getSession();
+
+const user = session?.user;
 
   const pathname = request.nextUrl.pathname;
 
@@ -86,6 +88,6 @@ export const config = {
     "/forgot-password",
     "/verify-email",
 
-    "/auth/callback/:path*",
+    "/auth/:path*",
   ],
 };
