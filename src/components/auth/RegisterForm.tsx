@@ -68,9 +68,7 @@ export function RegisterForm() {
     );
 
     router.push(
-  `/auth/verify-email?email=${encodeURIComponent(
-    data.email
-  )}`
+  `/auth/verify-email?email=${encodeURIComponent(data.email)}`
 );
   } catch (error: any) {
     toast.error(
