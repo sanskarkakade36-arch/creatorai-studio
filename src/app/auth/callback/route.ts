@@ -1,14 +1,14 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 
-export async function GET(request: Request) {
+export async function GET(request: NextRequest) {
   const requestUrl = new URL(request.url);
 
   const code = requestUrl.searchParams.get("code");
-  const next = requestUrl.searchParams.get("next") ?? "/dashboard";
 
   if (!code) {
-    console.error("❌ No authorization code received.");
+    console.error("OAuth Error: No code received.");
+
     return NextResponse.redirect(
       `${requestUrl.origin}/login?error=no_code`
     );
@@ -18,23 +18,17 @@ export async function GET(request: Request) {
 
   const { error } = await supabase.auth.exchangeCodeForSession(code);
 
-  console.log("======================================");
-  console.log("OAuth Callback");
-  console.log("Origin:", requestUrl.origin);
-  console.log("Code Present:", !!code);
-  console.log("Exchange Error:", error);
-  console.log("======================================");
-
   if (error) {
-    console.error("❌ OAuth Exchange Failed:", error.message);
+    console.error("OAuth Exchange Error:", error.message);
 
     return NextResponse.redirect(
-      `${requestUrl.origin}/login?error=oauth`
+      `${requestUrl.origin}/login?error=oauth_failed`
     );
   }
 
-  console.log("✅ Session created successfully.");
-  console.log("➡ Redirecting to:", `${requestUrl.origin}${next}`);
+  console.log("OAuth login successful");
 
-  return NextResponse.redirect(`${requestUrl.origin}${next}`);
-};
+  return NextResponse.redirect(
+    `${requestUrl.origin}/dashboard`
+  );
+}

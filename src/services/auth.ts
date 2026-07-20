@@ -41,15 +41,14 @@ class AuthService {
 
   /**
    * --------------------------
-   * Login
+   * Email Login
    * --------------------------
    */
   async signIn(data: LoginFormData) {
-    const { error } =
-      await supabase.auth.signInWithPassword({
-        email: data.email,
-        password: data.password,
-      });
+    const { error } = await supabase.auth.signInWithPassword({
+      email: data.email,
+      password: data.password,
+    });
 
     if (error) throw error;
 
@@ -62,24 +61,23 @@ class AuthService {
    * --------------------------
    */
   async signUp(data: RegisterFormData) {
-  const { data: authData, error } =
-    await supabase.auth.signUp({
+    const { data: authData, error } = await supabase.auth.signUp({
       email: data.email,
       password: data.password,
       options: {
+        emailRedirectTo: `${window.location.origin}/auth/callback`,
         data: {
           full_name: data.fullName,
         },
       },
     });
 
-  console.log("Supabase Response:", authData);
-  console.log("Supabase Error:", error);
+    console.log("Signup Response:", authData);
 
-  if (error) throw error;
+    if (error) throw error;
 
-  return authData;
-}
+    return authData;
+  }
 
   /**
    * --------------------------
@@ -87,8 +85,7 @@ class AuthService {
    * --------------------------
    */
   async logout() {
-    const { error } =
-      await supabase.auth.signOut();
+    const { error } = await supabase.auth.signOut();
 
     if (error) throw error;
 
@@ -102,14 +99,9 @@ class AuthService {
    */
   async forgotPassword(email: string) {
     const { error } =
-      await supabase.auth.resetPasswordForEmail(
-        email,
-        {
-          redirectTo:
-            window.location.origin +
-            "/reset-password",
-        }
-      );
+      await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/auth/reset-password`,
+      });
 
     if (error) throw error;
 
@@ -122,10 +114,9 @@ class AuthService {
    * --------------------------
    */
   async updatePassword(password: string) {
-    const { error } =
-      await supabase.auth.updateUser({
-        password,
-      });
+    const { error } = await supabase.auth.updateUser({
+      password,
+    });
 
     if (error) throw error;
 
@@ -138,12 +129,11 @@ class AuthService {
    * --------------------------
    */
   async updateProfile(fullName: string) {
-    const { error } =
-      await supabase.auth.updateUser({
-        data: {
-          full_name: fullName,
-        },
-      });
+    const { error } = await supabase.auth.updateUser({
+      data: {
+        full_name: fullName,
+      },
+    });
 
     if (error) throw error;
 
@@ -151,32 +141,26 @@ class AuthService {
   }
 
   /**
- * --------------------------
- * Google Login
- * --------------------------
- */
-async signInWithGoogle() {
-  console.log("Inside signInWithGoogle");
+   * --------------------------
+   * Google Login
+   * --------------------------
+   */
+  async signInWithGoogle() {
+    const { data, error } =
+      await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback`,
+          skipBrowserRedirect: true,
+        },
+      });
 
-  const { data, error } = await supabase.auth.signInWithOAuth({
-    provider: "google",
-    options: {
-      redirectTo: `${window.location.origin}/auth/callback`,
-      skipBrowserRedirect: true,
-    },
-  });
+    if (error) throw error;
 
-  console.log("DATA:", data);
-  console.log("ERROR:", error);
-
-  if (error) throw error;
-
-  if (data?.url) {
-    console.log("URL =", data.url);
-
-    window.location.assign(data.url);
+    if (data?.url) {
+      window.location.href = data.url;
+    }
   }
-}
 
   /**
    * --------------------------
@@ -184,17 +168,20 @@ async signInWithGoogle() {
    * --------------------------
    */
   async signInWithGithub() {
-    const { error } =
+    const { data, error } =
       await supabase.auth.signInWithOAuth({
         provider: "github",
         options: {
-          redirectTo:
-            window.location.origin +
-            "/dashboard",
+          redirectTo: `${window.location.origin}/auth/callback`,
+          skipBrowserRedirect: true,
         },
       });
 
     if (error) throw error;
+
+    if (data?.url) {
+      window.location.href = data.url;
+    }
   }
 
   /**
@@ -202,14 +189,14 @@ async signInWithGoogle() {
    * Resend Verification Email
    * --------------------------
    */
-  async resendVerificationEmail(
-    email: string
-  ) {
-    const { error } =
-      await supabase.auth.resend({
-        type: "signup",
-        email,
-      });
+  async resendVerificationEmail(email: string) {
+    const { error } = await supabase.auth.resend({
+      type: "signup",
+      email,
+      options: {
+        emailRedirectTo: `${window.location.origin}/auth/callback`,
+      },
+    });
 
     if (error) throw error;
 
@@ -217,5 +204,4 @@ async signInWithGoogle() {
   }
 }
 
-export const authService =
-  new AuthService();
+export const authService = new AuthService();
