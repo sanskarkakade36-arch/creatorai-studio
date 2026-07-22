@@ -22,24 +22,24 @@ export function useAuth() {
    */
 
   const loadUser = async () => {
-    try {
-      const currentUser = await authService.getCurrentUser();
+  try {
+    const {
+      data: { session },
+      error,
+    } = await supabase.auth.getSession();
 
-      const currentSession = await authService.getSession();
+    if (error) throw error;
 
-      setUser(currentUser);
-
-      setSession(currentSession);
-    } catch (error) {
-      console.error(error);
-
-      setUser(null);
-
-      setSession(null);
-    } finally {
-      setLoading(false);
-    }
-  };
+    setSession(session);
+    setUser(session?.user ??null);
+  } catch (error) {
+    console.error(error);
+    setSession(null);
+    setUser(null);
+  } finally {
+    setLoading(false);
+  }
+};
 
   /**
    * -----------------------------

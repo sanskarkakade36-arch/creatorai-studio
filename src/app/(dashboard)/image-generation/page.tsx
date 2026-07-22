@@ -218,11 +218,11 @@ if (data.creditsUsed) {
   return (
     <div>
       <Header title="AI Image Generation" />
-      <div className="flex h-[calc(100vh-57px)] min-w-0 overflow-hidden">
+      <div className="flex flex-col xl:flex-row min-h-full w-full overflow-hidden">
 
         {/* Left panel — controls */}
         <div
-          className="w-80 shrink-0 overflow-y-auto p-4 space-y-4"
+        className="hidden xl:block xl:w-80 2xl:w-96 shrink-0 overflow-y-auto p-4 space-y-4"
           style={{ borderRight: "1px solid var(--border)", background: "var(--bg-secondary)" }}
         >
           {/* Reference image upload */}
@@ -434,9 +434,9 @@ if (data.creditsUsed) {
         </div>
 
         {/* Right panel — prompt + output */}
-        <div className="flex-1 min-w-0 flex flex-col overflow-hidden">
+        <div className="flex-1 flex flex-col overflow-hidden min-w-0">
           {/* Prompt area */}
-          <div className="p-4 space-y-3" style={{ borderBottom: "1px solid var(--border)" }}>
+          <div className="w-full max-w-screen-2xl mx-auto p-6 space-y-4" style={{ borderBottom: "1px solid var(--border)" }}>
             <div className="relative">
               <textarea
                 value={prompt}
