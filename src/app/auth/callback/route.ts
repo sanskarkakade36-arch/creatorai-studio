@@ -6,10 +6,13 @@ export async function GET(request: NextRequest) {
 
   const code = requestUrl.searchParams.get("code");
 
+  // Use your production URL from the environment
+  const appUrl =
+    process.env.NEXT_PUBLIC_APP_URL ||
+    request.nextUrl.origin;
+
   if (!code) {
-    return NextResponse.redirect(
-      new URL("/login", requestUrl.origin)
-    );
+    return NextResponse.redirect(`${appUrl}/login`);
   }
 
   const supabase = await createClient();
@@ -18,17 +21,13 @@ export async function GET(request: NextRequest) {
     await supabase.auth.exchangeCodeForSession(code);
 
   if (error) {
-    console.error(error);
+    console.error("Exchange Error:", error);
 
-    return NextResponse.redirect(
-      new URL("/login", requestUrl.origin)
-    );
+    return NextResponse.redirect(`${appUrl}/login`);
   }
 
   // Refresh session
   await supabase.auth.getUser();
 
-  return NextResponse.redirect(
-    new URL("/auth/success", requestUrl.origin)
-  );
+  return NextResponse.redirect(`${appUrl}/auth/success`);
 }
